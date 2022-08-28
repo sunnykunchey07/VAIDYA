@@ -1,0 +1,39 @@
+#include "U8glib.h"
+U8GLIB_SH1106_128X64 u8g(U8G_I2C_OPT_NONE);
+
+void draw(void) {
+  u8g.setFont(u8g_font_profont12);
+  u8g.setPrintPos(0, 10);
+  u8g.print("HI,IM VAIDYA");
+  u8g.setPrintPos(0, 25);
+  u8g.print("A SEMI-HUMANOID ROBOT");
+  u8g.setPrintPos(0, 40);
+  u8g.print("CREATED BY SUNNY.K");
+}
+
+void draw2(void) {
+  u8g.setFont(u8g_font_profont12);
+  u8g.setPrintPos(0, 10);
+  u8g.print("IAM FULLY AUTOMATED");
+  u8g.setPrintPos(0, 25);
+  u8g.print("AND TRAINED");
+  u8g.setPrintPos(0, 40);
+  u8g.setFont(u8g_font_profont12);
+  u8g.print("PLEASE FOLLOW MY INSTRUCTIONS");
+}
+
+void setup(void) {
+}
+
+void loop(void) {
+  u8g.firstPage();
+  do {
+    draw();
+  } while (u8g.nextPage() );
+  delay(2000000);
+  u8g.firstPage();
+  do {
+    draw2();
+  } while (u8g.nextPage());
+  delay(2000000);
+}

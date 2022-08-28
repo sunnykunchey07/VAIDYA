@@ -1,0 +1,123 @@
+#include "U8glib.h"
+U8GLIB_SH1106_128X64 u8g(U8G_I2C_OPT_NONE);
+#include "ServoTimer2.h"      //declare ServoTimer2 library to run servo with TMRpcm
+#include"SD.h"                //declare SD library for SD cards
+#define SD_ChipSelectPin 10   //select sd chip select pin 10
+#include"TMRpcm.h"            //library to play audio from sd card by arduino
+#include"SPI.h"              //create Serial peripheral Interface Communication
+TMRpcm tmrpcm;              //name tmrpcm
+ServoTimer2 head;           //declare Head servo followed by left right hand servos
+ServoTimer2 lhand;
+ServoTimer2 rhand;
+
+int in1= 6;               //declare Infrared sensor pins
+int in2= 7;
+int in3= 8;
+
+void draw(void) {
+  u8g.setFont(u8g_font_profont12);
+  u8g.setPrintPos(0, 10);
+  u8g.print("HELLO,IM VAIDYA");
+  u8g.setPrintPos(0, 25);
+  u8g.print("A SEMI-HUMANOID ROBOT");
+  u8g.setPrintPos(0, 40);
+  u8g.print("CREATED BY SUNNY.K");
+}
+
+void draw2(void) {
+  u8g.setFont(u8g_font_profont12);
+  u8g.setPrintPos(0, 10);
+  u8g.print("IAM FULLY AUTOMATED");
+  u8g.setPrintPos(0, 25);
+  u8g.print("AND TRAINED");
+  u8g.setPrintPos(0, 40);
+  u8g.setFont(u8g_font_profont12);
+  u8g.print("PLEASE FOLLOW ");
+  u8g.setFont(u8g_font_profont12);
+  u8g.setPrintPos(0, 55);
+  u8g.print("MY INSTRUCTIONS ");
+}
+
+void draw3(void) {
+  u8g.setFont(u8g_font_profont12);
+  u8g.setPrintPos(0, 10);
+  u8g.print("THE TESTING PROCESS");
+  u8g.setPrintPos(0, 25);
+  u8g.print("IS ABOUT TO BEGIN");
+  u8g.setPrintPos(0, 40);
+  u8g.setFont(u8g_font_profont12);
+  u8g.print("EVERTHING IS INTACT");
+  u8g.setFont(u8g_font_profont12);
+  u8g.setPrintPos(0, 55);
+  u8g.print("SO PLEASE KEEP CALM ");
+}
+
+void setup() 
+{
+ head.attach(2);        //attach servos to pins
+ lhand.attach(3);
+ rhand.attach(4);
+ tmrpcm.speakerPin=9;   //Speaker pin 9,audio out pin is 9
+ 
+ Serial.begin(9600);    //initialize Serial communication
+ 
+ if(!SD.begin(SD_ChipSelectPin))   //this runs until SD is connected
+ {
+  Serial.println("SD FAIL");
+  return; 
+ }
+
+}
+void loop() 
+{
+  if(!(digitalRead(in3)))          //Chest sensor is low- Say "Hi there.."
+  {
+   tmrpcm.play("welcome.wav");     //Playing audio saved as 'welcome.wav'
+    lhand.write(2500);            //hand up- saying HI
+    delay(2000);
+    lhand.write(1200);            //hand comes to handshake position
+
+       u8g.firstPage();
+  do {
+    draw();
+  } while (u8g.nextPage() );
+  delay(5000);
+     u8g.firstPage();
+  do {
+    draw2();
+  } while (u8g.nextPage());
+  delay(5000);
+   u8g.firstPage();
+  do {
+    draw3();
+  } while (u8g.nextPage());
+  delay(100);
+    
+    delay(9000);
+    
+  }
+ 
+  if(!(digitalRead(in1)))       //Sensor on eye gets low play audio -"dont touch my eye"
+  {
+    tmrpcm.play("dont.wav");     //play file saved as "dont.wav" - dont touch my eye 
+    rhand.write(300);            //hand up
+    head.write(2000);
+    delay(3000);
+  }
+ 
+  if(!(digitalRead(in2)))     //Sensor on eye gets low play audio -"dont touch my eye"
+  {
+    tmrpcm.play("dont.wav");
+    lhand.write(2000);
+    head.write(1000);
+    delay(3000);
+  }
+ 
+ else             //No input detected - keep the robot steady.
+ {
+  
+  lhand.write(300);
+  rhand.write(1700);
+  head.write(1500);
+ }
+}
